@@ -19,5 +19,4 @@ def get_event(db: Session, event_id: int) -> Event:
 
 def get_all_event(db: Session, skip: int = 0, limit: int = 20) -> List[Event]:
     all_event = db.query(Event).offset(skip).limit(limit).all()
-    print(type(all_event)) #Debugging
     return all_event if all_event else []

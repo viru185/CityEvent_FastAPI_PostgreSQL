@@ -10,7 +10,7 @@ class EventBase(BaseModel):
     city: str
     venue: Optional[str] = None
     category: Optional[str] = None
-    price: Optional[int] = 0.0
+    price: Optional[float] = 0.0
 
 
 class EventCreate(EventBase):
