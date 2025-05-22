@@ -48,4 +48,4 @@ class Populate:
         print(f"Added {n} fake events to the database.")
 
 if __name__ == "__main__":
-    Populate.run(n=2)
+    Populate.run()

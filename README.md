@@ -25,7 +25,7 @@ Goal: Build a public API that provides event data for different cities. Focus on
 
 ## 🔧 API Endpoints
 
-- GET /events – list all events
+- GET /events/getall – list all events
 - GET /events/{id} – get a single event
 - GET /events/search?city=London&category=tech – filter events
 - POST /events – add new event
@@ -49,6 +49,8 @@ city_events_api/
 │   ├── __init__.py
 │   ├── main.py               # FastAPI app instance
 │   ├── config.py             # DB and app settings
+|   ├── logs/
+│   │   └── app.log           # app log file
 │   ├── models/
 │   │   ├── __init__.py
 │   │   └── event.py          # SQLAlchemy Event model
@@ -66,6 +68,7 @@ city_events_api/
 │   │   ├── session.py        # DB connection
 │   │   └── base.py           # Base class for models
 │   └── utils/
+|       ├── logger.py         # app logger to log the events.
 │       └── populate.py       # Script to load fake or real data
 ├── alembic/                  # DB migrations
 │   └── ...

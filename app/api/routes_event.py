@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException
 
 from app.schemas.event import EventCreate, EventRead
-from app.crud.event import create_event, get_event, get_all_event
+from app.crud.event import create_event, get_event, get_all_event, delete_event
 from app.db.session import db_dependency
 
 router = APIRouter(prefix="/events", tags=["Events"])
@@ -23,3 +23,8 @@ async def read_event(event_id: int, db: db_dependency):
     if not db_event:
         raise HTTPException(status_code=404, detail="Event not found")
     return db_event
+
+
+@router.delete("/{event_id}")
+async def remove_event(event_id: int, db: db_dependency):
+    return delete_event(db, event_id)
