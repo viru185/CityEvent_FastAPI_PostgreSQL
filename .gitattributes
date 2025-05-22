@@ -1,0 +1,7 @@
+* text=auto
+
+# Ensure all the listed files always use LF
+*.py text eol=lf
+*.toml text eol=lf
+*.lock text eol=lf
+*.gitignore text eol=lf
