@@ -3,19 +3,16 @@ from typing import List
 from fastapi import HTTPException
 
 from app.models.event import Event
-from app.schemas.event import EventCreate
+
+from app.schemas.event import EventCreate, EventPatch
 
 
-def create_event(db: Session, event_data: EventCreate) -> Event:
-    db_event = Event(**event_data.dict())
+def create_event(event: EventCreate, db: Session) -> Event:
+    db_event = Event(**event.dict())
     db.add(db_event)
     db.commit()
     db.refresh(db_event)
     return db_event
-
-
-def get_event(db: Session, event_id: int) -> Event:
-    return db.query(Event).filter(Event.id == event_id).first()
 
 
 def get_all_event(db: Session, skip: int = 0, limit: int = 20) -> List[Event]:
@@ -23,10 +20,27 @@ def get_all_event(db: Session, skip: int = 0, limit: int = 20) -> List[Event]:
     return all_event if all_event else []
 
 
-def delete_event(db: Session, event_id: int) -> None:
+def read_event_by_id(db: Session, event_id: int) -> Event:
+    return db.query(Event).filter(Event.id == event_id).first()
+
+
+def update_event_by_id(db: Session, event_id: int, event_data: EventPatch) -> Event:
+    event = db.query(Event).filter(Event.id == event_id).first()
+
+    if not event:
+        raise HTTPException(status_code=404, detail=f"Event {event_id} not found")
+
+    for key, value in event_data.dict(exclude_none=True).items():
+        setattr(event, key, value)
+
+    db.commit()
+    db.refresh(event)
+    return event
+
+
+def delete_event_by_id(db: Session, event_id: int) -> None:
     event = db.query(Event).filter(Event.id == event_id).first()
     if not event:
-        raise HTTPException(status_code=404, detail="Event not found.")
+        raise HTTPException(status_code=404, detail=f"Event {event_id} not found.")
     db.delete(event)
     db.commit()
-    return {"message": f"Event {event_id} deleted successfully."} 

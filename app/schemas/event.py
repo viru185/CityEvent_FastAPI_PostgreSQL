@@ -20,5 +20,16 @@ class EventCreate(EventBase):
 class EventRead(EventBase):
     id: int
 
-    class config:
+    class Config:
         orm_mode = True
+
+
+class EventPatch(EventBase):
+    title: Optional[str] = None
+    description: Optional[str] = None
+    date_time: Optional[datetime] = None
+    city: Optional[str] = None
+    venue: Optional[str] = None
+    category: Optional[str] = None
+    price: Optional[float] = None
+
