@@ -12,6 +12,7 @@ from app.crud.event import (
     read_event_by_id,
     update_event_by_id,
     delete_event_by_id,
+    search_events as crud_search_events
 )
 
 router = APIRouter(prefix="/events", tags=["Events"])
@@ -33,12 +34,15 @@ async def add_event(event: EventCreate, db: db_dependency) -> EventRead:
     Raises:
         HTTPException: If event creation fails.
     """
+    logger.info(f"Creating event: {event}")
     return create_event(event=event, db=db)
 
 
 @router.get("/", response_model=list[EventRead])
 async def read_events(
-    db: db_dependency, skip: int = 0, limit: int = 20
+    db: db_dependency,
+    skip: int | None = 0,
+    limit: int | None = 20,
 ) -> list[EventRead]:
     """
     Retrieve a list of all events with optional pagination.
@@ -51,8 +55,31 @@ async def read_events(
     Returns:
         list[EventRead]: List of event objects.
     """
+    logger.info(f"Fetching events: skip={skip}, limit={limit}")
     return get_all_event(skip=skip, limit=limit, db=db)
 
+
+@router.get("/search", response_model=list[EventRead])
+async def search_events(
+    db: db_dependency,
+    title: str | None = None,
+    city: str | None = None,
+    category: str | None = None,
+) -> list[EventRead]:
+    """
+    Search for events based on title, city, or category.
+
+    Args:
+        title (str, optional): Title of the event to search for.
+        city (str, optional): City of the event to search for.
+        category (str, optional): Category of the event to search for.
+        db (Session): Database session dependency.
+
+    Returns:
+        list[EventRead]: List of matching event objects.
+    """
+    logger.info(f"Searching events with title={title}, city={city}, category={category}")
+    return crud_search_events(db=db, title=title, city=city, category=category)
 
 @router.get("/{event_id}", response_model=EventRead)
 async def read_event(event_id: int, db: db_dependency) -> EventRead:
@@ -69,8 +96,10 @@ async def read_event(event_id: int, db: db_dependency) -> EventRead:
     Raises:
         HTTPException: If the event is not found.
     """
+    logger.info(f"Fetching event with id={event_id}")
     db_event = read_event_by_id(event_id=event_id, db=db)
     if not db_event:
+        logger.warning(f"Event not found: id={event_id}")
         raise HTTPException(status_code=404, detail="Event not found")
     return db_event
 
@@ -93,6 +122,7 @@ async def update_event(
     Raises:
         HTTPException: If the event is not found.
     """
+    logger.info(f"Updating event id={event_id} with data={event_data}")
     return update_event_by_id(event_id=event_id, event_data=event_data, db=db)
 
 
@@ -111,4 +141,5 @@ async def delete_event(event_id: int, db: db_dependency) -> None:
     Raises:
         HTTPException: If the event is not found.
     """
+    logger.info(f"Deleting event id={event_id}")
     delete_event_by_id(event_id=event_id, db=db)
