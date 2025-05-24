@@ -12,7 +12,7 @@ from app.crud.event import (
     read_event_by_id,
     update_event_by_id,
     delete_event_by_id,
-    search_events as crud_search_events
+    search_events as crud_search_events,
 )
 
 router = APIRouter(prefix="/events", tags=["Events"])
@@ -41,8 +41,8 @@ async def add_event(event: EventCreate, db: db_dependency) -> EventRead:
 @router.get("/", response_model=list[EventRead])
 async def read_events(
     db: db_dependency,
-    skip: int | None = 0,
-    limit: int | None = 20,
+    skip: int = 0,
+    limit: int = 20,
 ) -> list[EventRead]:
     """
     Retrieve a list of all events with optional pagination.
@@ -78,8 +78,11 @@ async def search_events(
     Returns:
         list[EventRead]: List of matching event objects.
     """
-    logger.info(f"Searching events with title={title}, city={city}, category={category}")
+    logger.info(
+        f"Searching events with title={title}, city={city}, category={category}"
+    )
     return crud_search_events(db=db, title=title, city=city, category=category)
+
 
 @router.get("/{event_id}", response_model=EventRead)
 async def read_event(event_id: int, db: db_dependency) -> EventRead:

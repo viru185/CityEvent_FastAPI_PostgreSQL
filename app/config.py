@@ -17,4 +17,4 @@ LOGS_DIR = "app/logs"
 # config related to logging
 LOG_LEVEL = "INFO"
 LOG_TO_FILE = True
-LOG_TO_CONSOLE = True
+LOG_TO_CONSOLE = False
